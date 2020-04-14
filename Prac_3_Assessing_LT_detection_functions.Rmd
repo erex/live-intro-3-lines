@@ -1,0 +1,187 @@
+---
+title: Introduction to distance sampling
+author: Centre for Research into Ecological and Environmental Modelling  **University of St Andrews**
+subtitle: Workshop, 04-15 May 2020
+date: Exercise 3. Assessing line transect detection functions
+output: 
+  html_document:
+    number_sections: yes
+    theme: flatly
+    highlight: tango
+    df_print: kable
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+answer <- FALSE
+```
+
+In Exercise 2, we fitted different detection functions and compared them in terms of goodness of fit and AIC. Here, we continue to fit and assess different models and look at additional arguments in the `ds` package.  
+
+# Objectives 
+
+The aim of this exercise is to practise fitting and assessing different line transect detection functions and in particular to:
+
+1. Understand the data format when there are no detections on a line,
+2. Explore different truncation options,
+3. Determine whether adjustment terms are required,
+4. Practice model selection,
+
+# Fitting models to simulated data
+
+The data used for this practical were generated from a half-normal distribution and therefore the true density is known. There are 12 transects.
+
+The data are stored in a data set `LTExercise3` which contains the following columns:
+
++ Study.Area - Name of study called (not very imaginatively) 'LTExercise3'
++ Region.Label - identifier of regions (in this case there is only one region and it is set to 'Default')
++ Area - size of the study region (km$^2$)
++ Sample.Label - line transect identifier (Line 1 - Line 12)
++ Effort - length of the line transects (km) 
++ object - unique identifier to each detected object
++ distance - perpendicular distances (metres).
+
+## Accessing the data
+
+Load the `Distance` package to access both the data and analytical functions.  
+
+```{r, echo=TRUE, eval=FALSE}
+# Load library (if not already loaded)
+library(Distance)
+# Access data
+data("LTExercise")
+# Check that it has been imported correctly
+head(LTExercise, n=3)
+```
+
+### Data format: no detections on a transect
+
+Before fitting models, it is worth investigating the data a bit further: let's start by summarising the perpendicular distances:
+
+```{r, echo=TRUE, eval=FALSE}
+# Summary of perpendicular distances
+summary(LTExercise$distance)
+```
+
+The summary indicates that the minimum distance is `min(hndat$distance)` and the maximum is `max(hndat$distance)` metres and there is one missing value (indicated by the `NA`). If we print a few rows of the data, we can see that this missing value occurred on transect 'Line 11'. 
+
+```{r, echo=TRUE, eval=FALSE}
+# Print out a few lines of data
+LTExercise[100:102, ]
+```
+
+The `NA` indicates that there were no detections on this transect, but the transect information needs to be included otherwise the number of transects and the total line length will be incorrect. 
+
+## Truncation
+
+Let's start by fitting a basic model, i.e. no adjustment terms (by default a half normal model is fitted). 
+
+For this project, perpendicular distances are in metres and the transect lines are recorded in kilometres.
+
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
+conversion.factor <- convert_units("meter", "kilometer", "square kilometer")
+# Fit half normal, no adjustments
+lt.hn <- ds(data=LTExercise, key="hn", adjustment=NULL,
+            convert.units=conversion.factor)
+```
+
+Looking at a summary of the model object, how many objects are there in total? What is the maximum observed perpendicular distance?
+
+```{r, echo=TRUE, eval=FALSE}
+# Print a summary of the fitted detection function
+summary(lt.hn)
+```
+
+Plot the detection function and specify many histogram bins:
+
+```{r, echo=TRUE, eval=FALSE, fig.height=4, fig.width=4}
+plot(lt.hn, nc=30)
+```
+
+The histogram indicates that there is a large gap in detections therefore, to avoid a long right hand tail in the detection function, truncation is necessary. There are several ways to truncate: excluding distances beyond some specified distance or excluding a specified percentage of the largest distances. Note that here we only consider excluding large perpendicular distances, which is frequently referred to as right truncation.  
+
+### Truncation at a fixed distance
+
+The following command truncates the perpendicular distances at 20 metres i.e. objects detected beyond 20 m are excluded. 
+
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
+# Truncate at 20metres
+lt.hn.t20m <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation=20,
+                 convert.units=conversion.factor)
+```
+
+Generate a summary and plot of the detection function to see what effect this truncation has had on the number of objects.  
+
+```{r, echo=answer, eval=answer, fig.height=4, fig.width=4}
+# Generate a summary 
+summary(lt.hn.t20m)
+# Plot detection function
+plot(lt.hn.t20m)
+```
+
+### Truncating a percentage of distances
+
+An alternative way to truncate distances is to specify a percentage of detected objects that should be excluded. In the command below, 10\% of the largest distances are excluded. 
+
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
+# Truncate largest 10% of distances
+lt.hn.t10per <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation="10%",
+                   convert.units=conversion.factor)
+```
+
+Generate a summary and plot to see what effect truncation has had.  
+
+```{r, echo=TRUE, eval=FALSE, fig.height=4, fig.width=4}
+summary(lt.hn.t10per)
+plot(lt.hn.t10per)
+```
+
+## Exploring different models
+
+Decide on a suitable truncation distance (but don't spend too long on this) and then fit different key detection functions and adjustment terms to assess whether these data can be satisfactorily analysed with the 'wrong' model. By default, the `ds` function fits a half normal function and  cosine adjustment terms (`adjustment="cos"`) of up to order 5: AIC is used to determine how many, if any, adjustment terms are required. This model is specified in the command below: 
+
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
+# Half normal detection, cosine adjustments, no truncation
+lt.hn.cos <- ds(data=LTExercise, key="hn", adjustment="cos",
+                convert.units=conversion.factor)
+```
+
+Change the key and adjustment terms: possible options are listed in Exercise 2 or use the `help(ds)` for options. See how the bias and precision compare between the models: the true density was 79.8 animals per km$^2$. 
+
+# Fitting models to real data (optional question)
+
+* The objective of this portion of the exercise is to give you more practice with a line transect data set and also familiarise you with converting from exact distances to binned distances.
+
+The data stored in a data set `cappercaillie` were collected during a line transect survey of capercaillie (a species of large grouse) in Scotland. The data consist of:
+
++ Region.Label - name of the region
++ Area - size of region (hectares\footnote{1 hectare = 100m $\times$ 100m})
++ Sample.Label - line transect identifier (one transect)
++ Effort - length of line (km)
++ object - unique identifier for each group detected 
++ distance - perpendicular distance to each group (metres)
++ size - group size (in this case only single birds were detected)
+
+Access these data and:
+
+1. Decide on a suitable truncation distance, if any,
+2. Fit a few different key detection functions and adjustment terms
+3. Compare the AIC values and qq plots and choose a model
+4. Calculate density for your chosen model. To obtain density in birds per hectare, the conversion units should be specified as `conversion.factor<-convert_units("meter", "kilometer", "hectare")`. 
+
+## Converting exact distances to binned distances
+
+Sometimes we wish to convert exact distances to binned distances, if for example, there is evidence of rounding to favoured values. To do this in `ds` we need to specify the cutpoints of the bins, including zero and the maximum distance. In the example below, cutpoints at 0, 10, 20, ..., 80 are specified. 
+
+```{r, echo=TRUE, eval=FALSE}
+# Import data
+data(capercaillie)
+# Specify cutpoint for bins
+bins <- seq(from=0, to=80, by=10)
+conversion.factor <- convert_units("meter", "kilometer", "hectare")
+# Specify model with binned distances
+caper.bin <- ds(data=capercaillie, key="hn", cutpoints=bins, 
+                convert.units=conversion.factor)
+# Plot
+plot(caper.bin)
+```

@@ -1,0 +1,225 @@
+---
+title: Introduction to distance sampling
+author: Centre for Research into Ecological and Environmental Modelling  **University of St Andrews**
+subtitle: Workshop, 04-15 May 2020
+date: Exercise 3. Assessing line transect detection functions 
+output: 
+  html_document:
+    number_sections: yes
+    theme: flatly
+    highlight: tango
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+<div class="alert  alert-success">
+  <strong>Solutions</strong> Assessing line transect detection functions
+</div>
+
+# Fitting models to simulated data
+
+```{r, echo=TRUE, eval=TRUE, message=FALSE}
+# Load library 
+library(Distance)
+# Access data
+data("LTExercise")
+# Check that it has been imported correctly
+head(LTExercise, n=3)
+# How many observations (remember no detections on line 11)
+max(LTExercise$object, na.rm=TRUE)
+```
+
+These data contain 105 observations. There were no detections on Line 11 and the format below indicates that `NA` is used to specify this. 
+
+```{r}
+LTExercise[100:102, ]
+```
+
+Here we can see the effect of the different truncation options.
+
+```{r, message=FALSE}
+conversion.factor <- convert_units("meter", "kilometer", "square kilometer")
+# Truncate at 20metres
+lt.hn.t20m <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation=20, 
+                convert.units=conversion.factor)
+summary(lt.hn.t20m)
+```
+
+This has excluded 2 observations. 
+
+```{r, message=FALSE}
+# Truncate 10% of largest distances
+lt.hn.t10per <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation="10%", 
+                convert.units=conversion.factor)
+summary(lt.hn.t10per)
+```
+
+This has excluded 11 observations. The plots are shown below.
+
+```{r, echo=TRUE, eval=TRUE}
+# Divide plot window
+par(mfrow=c(1,2))
+plot(lt.hn.t20m, main="Truncation 20m")
+plot(lt.hn.t10per, main="Truncation 10%")
+```
+
+A few different models are shown below.  
+
+```{r, echo=TRUE, eval=TRUE, message=FALSE}
+# Fit a few different models
+# Half normal model, no adjustments, no truncation
+lt.hn <- ds(data=LTExercise, key="hn", adjustment=NULL, convert.units=conversion.factor)
+# Half normal model, cosine adjustments, truncation at 20m
+lt.hn.cos.t20m <- ds(data=LTExercise, key="hn", adjustment="cos", truncation=20, 
+                     convert.units=conversion.factor)
+# Uniform model, cosine adjustments, truncation at 20m
+lt.uf.cos.t20m <- ds(data=LTExercise, key="unif", adjustment="cos", 
+                     truncation=20, convert.units=conversion.factor)
+# Hazard rate model, no adjustments, truncation at 20m
+lt.hr.t20m <- ds(data=LTExercise, key="hr", adjustment="poly", truncation=20,
+                 convert.units=conversion.factor)
+```
+
+```{r, echo=FALSE, eval=TRUE}
+# This block of code is quite complex, but not because of performing
+#   distance sampling analysis.  Instead it is used to make the tables
+#   for the solution look attractive.
+lt.tab <- data.frame(DetectionFunction=c("Half-normal",
+                                         "Half-normal","Uniform","Hazard rate"),
+                     Adjustments=c("None","Cosine","Cosine","Polynomial"), 
+                     Terms=c(0,0,1,0), Truncation=c(35.8,20,20,20), AIC=rep(NA,4), Pa=rep(NA,4), Density=rep(NA,4), D.CV=rep(NA,4), Lower.CI=rep(NA,4), Upper.CI=rep(NA,4))
+
+get.results.f <- function(fit.model) {   
+  return(c(AIC=summary(fit.model$ddf)$aic,
+         Pa=fit.model$dht$individuals$average.p,
+         D=fit.model$dht$individuals$D$Estimate,
+         D.CV=fit.model$dht$individuals$D$cv,
+         lCL=fit.model$dht$individuals$D$lcl,
+         uCL=fit.model$dht$individuals$D$ucl))
+}
+
+lt.tab[1,5:10] <- get.results.f(lt.hn)
+lt.tab[2,5:10] <- get.results.f(lt.hn.cos.t20m)
+lt.tab[3,5:10] <- get.results.f(lt.uf.cos.t20m)
+lt.tab[4,5:10] <- get.results.f(lt.hr.t20m)
+```
+
+The results are shown in the table below: 'Terms' indicates the number of selected adjustment terms and 'Pa' is the estimated detection probability. 
+
+```{r, echo=FALSE, eval=TRUE}
+# Print results
+knitr::kable(lt.tab, digits=3,
+             caption="Results for simulated data with differing truncation and detection functions.")
+```
+
+There is a change in $\hat P_a$ due to truncation but all the models provide very similar density results, although precision is slightly larger for the hazard rate model (because more parameters are estimated). Agreement between the estimate and the known true density is less good if you do not truncate the data, or do not truncate sufficiently. Note that the AIC values can only be compared for models with the same truncation and hence the same objects. 
+
+The take home message is that, with care, we can get reliable estimates using the wrong model (remember the data were simulated using a half normal detection function): this is useful because, in practise, the 'correct' model is never known.
+
+```{r, echo=TRUE, eval=TRUE}
+# Divide plot window
+par(mfrow=c(2,2))
+# Plot detection functions
+plot(lt.hn, main="HN, no truncation")
+plot(lt.hn.cos.t20m, main="HN, truncation at 20m")
+plot(lt.uf.cos.t20m, main="Uniform, truncation at 20m")
+plot(lt.hr.t20m, main="HR, truncation at 20m")
+```
+
+# Fitting models to real data (optional)
+
+After accessing these data, a basic model is fitted and plotted to determine if truncation is required. 
+
+```{r, fig.height=4, fig.width=4, message=FALSE}
+# Access data
+data(capercaillie)
+# Check data OK
+head(capercaillie, n=3)
+conversion.factor <- convert_units("meter", "kilometer", "hectare")
+# Fit a half normal model with no adjustments and no truncation
+caper.hn <- ds(data=capercaillie, key="hn", adjustment=NULL, 
+               convert.units=conversion.factor)
+# Plot with lots of bins, each of width 2m
+plot(caper.hn, nc=40)
+```
+
+There is not a long tail to the histogram of perpendicular distances and so no truncation will be used. 
+
+There may be evidence of rounding to some values (e.g. 0, 30, 40, 70) however, we will ignore this at present (but address it below) and fit the three alternative key functions and use the default setting for adjustments terms (i.e. cosine up to order 5). 
+
+```{r, message=FALSE}
+# Fit different models allowing cosine adjustments if required
+# Half normal model 
+caper.hn.cos <- ds(data=capercaillie, key="hn", adjustment="cos",
+                   convert.units=conversion.factor)
+# Hazard rate model  
+caper.hr.cos <- ds(data=capercaillie, key="hr", adjustment="cos",
+                   convert.units=conversion.factor)
+# Uniform model  
+caper.uf.cos <- ds(data=capercaillie, key="unif", adjustment="cos",
+                   convert.units=conversion.factor)
+```
+
+The detection functions and qq plots are shown below:
+
+```{r, echo=TRUE, eval=TRUE, results="hide"}
+# Divide plot window
+par(mfrow=c(3,2))
+par(mar=c(4,4,.2,.1))
+plot(caper.hn.cos, main="Half normal")
+gof_ds(caper.hn.cos)
+plot(caper.hr.cos, main="Hazard rate")
+gof_ds(caper.hr.cos)
+plot(caper.uf.cos, main="Uniform")
+gof_ds(caper.uf.cos)
+```
+
+Summarise the goodness of fit statistics (in a pretty format). This table indicates that the hazard rate detection function had the lowest AIC but the difference in AIC between all three models was small. 
+
+```{r}
+knitr::kable(summarize_ds_models(caper.hn.cos, caper.hr.cos, caper.uf.cos, output="plain"),
+               caption="Summary of results of Capercaillie analysis.", digits = 3)
+```
+
+The results for the three different models are shown below: density is in birds per ha.  
+
+```{r, echo=FALSE, eval=TRUE}
+# Harvest results
+caper.tab <- data.frame(DetectionFunction=c("Half-normal","Hazard rate",
+                                            "Uniform"), 
+                        AIC=rep(NA,3), Pa=rep(NA,3), Density=rep(NA,3), 
+                        D.CV=rep(NA,3), Lower.CI=rep(NA,3), Upper.CI=rep(NA,3))
+caper.tab[1,2:7] <- get.results.f(caper.hn.cos)
+caper.tab[2,2:7] <- get.results.f(caper.hr.cos)
+caper.tab[3,2:7] <- get.results.f(caper.uf.cos)
+
+# Print results
+knitr::kable(caper.tab, digits=3,
+             caption="Capercaillie point estimates of density and associated measures of precision.")
+```
+
+These capercaillie data are reasonably well-behaved and different models that fit the data well should give similar results. 
+
+## Converting exact distances to binned distances
+
+To deal with rounding in the distance data, the exact distances can be converted into binned distances. The cutpoints need to be chosen with care so that the distance bins are sufficiently wide enough to ensure that the 'correct' perpendicular distance is in the band containing the rounded recorded value. The bin widths do not have to be equal, as shown in example here: the cutpoints are 0, 7.5, 17.5, 27.5, ..., 67.5, 80.0 m. Note, that any distances beyond the largest bin will be excluded.
+
+```{r, echo=TRUE, eval=TRUE, fig.width=3, fig.height=3, message=FALSE}
+# Specify (uneven) cutpoint for bins
+bins <- c(0, seq(from=7.5, to=67.5, by=10), 80)
+# Check bins
+bins
+# Specify model with binned distances
+caper.hn.bin <- ds(data=capercaillie, key="hn", adjustment="cos", cutpoints=bins,
+                   convert.units=conversion.factor)
+# Plot
+plot(caper.hn.bin)
+# Summarise results
+caper.hn.bin$dht$individuals$summary
+caper.hn.bin$dht$individuals$D[1:6]
+```
+
+Note that the binning of the data results in virtually identical estimates of density (`r round(caper.hn.bin$dht$individuals$D$Estimate, 3)` birds per ha) and essentially no change in the precision of the density estimate compared with the estimates with analysis of exact distance data.

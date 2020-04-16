@@ -1,0 +1,129 @@
+---
+title: "Introduction to distance sampling"
+author: "Centre for Research into Ecological and Environmental Modelling **University of St Andrews**"
+date: "Demo: two stages of model selection"
+output:
+  html_document:
+  number_sections: yes
+theme: flatly
+highlight: tango
+df_print: kable
+subtitle: Workshop, 04-15 May 2020
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, comment = NA)
+library(kableExtra)
+```
+
+<div class="alert  alert-success">
+  <strong>Demonstration</strong> Eastern tropical Pacific dolphin data
+</div>
+
+After my improvised description of selection of adjustment terms, I thought I should provide a more thorough description via an example.  The purpose of the demonstration is to fit models with adjustments to a data set and expose, in detail, all models fitted during the process.
+
+For this demonstration, I require a data set with an interesting shape to the histogram.  I will not describe the data set, other than to note it contains roughly 1000 detections.  We will see this data set again next week.
+    
+# Data preparation
+
+I'm only going to use a portion of the detections, as the survey vessel used a combination of observers in various locations on the ship.
+```{r dataprep, message=FALSE}
+library(Distance)
+data("ETP_Dolphin")
+bino <- subset(ETP_Dolphin, Search.method<3)
+```
+
+# What does it mean to *include adjustment terms*?
+
+When I submit the following code, I am actually requesting that a number of models with a half-normal key be fitted to data.  I am leaving it to the `ds()` function to perform model selection among competing half-normal keys with 0, 1, 2, 3, 4 or 5 adjustment terms.
+
+```{r withadj, eval=FALSE}
+some.results <- ds(data=bino, key="hn", adjustments="cos")
+```
+
+If the model with a single adjustment term is preferable to the model without an adjustment term, then a model with two adjustment terms is fitted and its AIC is compared to the single term model's AIC.  This pattern repeats until the best half-normal with cosine adjustments model is identified in a stepwise fashion.
+
+# Candidate models
+
+I wish to fit each of the key functions (uniform, half-normal and hazard rate).  In addition, I also wish to include adjustment terms for each of the key functions.  I limit my enthusiasm to consider only cosine adjustment terms.  The actual number of models that will be fit to the data is unknown at this point.
+
+# First round of model selection
+
+The messages echoed to the console by `ds()` will show the *within key function* model selection progression.
+
+## Half-normal cosine
+
+```{r hncos}
+hncos <- ds(bino, key="hn", adj="cos")
+```
+
+Three models with the half-normal key are fitted, with the preferred model being the second fitted, namely the model with a single adjustment term.
+
+## Uniform cosine
+```{r unicos}
+unicos <- ds(bino, key="unif", adj="cos")
+```
+
+The same pattern as with the half-normal key, with a small exception.  Four models with the uniform key are fitted, with the preferred model being the third fitted, namely the model with a three adjustment term. 
+
+## Hazard rate cosine
+```{r hzcos}
+hrcos <- ds(bino, key="hr", adj="cos")
+```
+
+Two models are fitted with the hazard rate key function.  The addition of a single adjustment term does not improve the AIC score, so there is no point in fitting a more complex model with additional adjustment terms.
+
+The contestants that emerge from the first round of model competition are:
+
+- half-normal with 1 adjustment term
+- uniform with 3 adjustment terms
+- hazard rate with no adjustment terms
+
+# Second round of model selection
+
+While assessing relative measures of fit with AIC, I'll also assess absolute goodness of fit.  I'm not exposing the call to the function `summarize_ds_models()` that performs this.
+
+```{r across, echo=FALSE}
+across.models <- summarize_ds_models(hncos,unicos,hrcos,output="plain")
+knitr::kable(across.models[, c(2,4,7)], row.names = FALSE, digits = 3) %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+All models adequately fit the data as shown by the Cramer von Mises P-values.  It is a close contest between models for smallest AIC score, with the smallest (by a fraction) going to the hazard rate model. 
+
+# Bonus
+
+Should I be concerned that the hazard rate might be over-fitting that spike, is the spike an artefact in the data that is exerting undue influence upon my choice of model?  If I have such concerns, I might choose to **over-ride** the model choice made by AIC.
+
+```{r bonus, echo=FALSE}
+knitr::kable(across.models[, c(2,5)], row.names = FALSE, digits=3) %>%
+    kable_styling(bootstrap_options = "condensed", full_width = F, position = "float_right")
+```
+
+I am comforted by the robustness of the estimates of $\hat{P_a}$ to choice of key function.  Hence, the decision of what model to use is of little consequence in the estimate of dolphin density.
+
+Given the minute differences in $\hat{P_a}$ produced by each model, I have little reason to believe the shapes of the fitted detection functions will differ.  Let's look.
+
+```{r figure, fig.show='hold', out.width='33%', echo=FALSE}
+plot(hncos, showpoints=FALSE, lwd=3, main="HN 1 adj")
+plot(unicos, showpoints=FALSE, lwd=3, main="Unif 3 adj")
+plot(hrcos, showpoints=FALSE, lwd=3, main="HR 0 adj")
+```
+
+# Question for you
+What would you expect the Q-Q plot to look like for any of these models with this data?
+
+<p>
+  <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    Press to see if you are correct
+  </button>
+</p>
+<div class="collapse" id="collapseExample">
+  <h5 class="card-title">Goodness of fit, half normal cosine</h5>
+  <div class="card card-block card text-white bg-warning mb-3" style="max-width: 75rem;">
+
+```{r, eval=TRUE, echo=FALSE}
+nowhere <- gof_ds(hncos, cex=0.6, pch=20)
+```
+  </div>
+</div>

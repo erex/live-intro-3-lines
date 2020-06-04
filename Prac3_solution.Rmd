@@ -1,7 +1,7 @@
 ---
 title: Introduction to distance sampling
 author: Centre for Research into Ecological and Environmental Modelling  **University of St Andrews**
-subtitle: Workshop, 04-15 May 2020
+subtitle: Workshop, 06-17 July 2020
 date: Exercise 3. Assessing line transect detection functions 
 output: 
   html_document:
@@ -207,7 +207,7 @@ These capercaillie data are reasonably well-behaved and different models that fi
 
 To deal with rounding in the distance data, the exact distances can be converted into binned distances. The cutpoints need to be chosen with care so that the distance bins are sufficiently wide enough to ensure that the 'correct' perpendicular distance is in the band containing the rounded recorded value. The bin widths do not have to be equal, as shown in example here: the cutpoints are 0, 7.5, 17.5, 27.5, ..., 67.5, 80.0 m. Note, that any distances beyond the largest bin will be excluded.
 
-```{r, echo=TRUE, eval=TRUE, fig.width=3, fig.height=3, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, fig.width=5, fig.height=4, message=FALSE}
 # Specify (uneven) cutpoint for bins
 bins <- c(0, seq(from=7.5, to=67.5, by=10), 80)
 # Check bins
@@ -216,7 +216,7 @@ bins
 caper.hn.bin <- ds(data=capercaillie, key="hn", adjustment="cos", cutpoints=bins,
                    convert.units=conversion.factor)
 # Plot
-plot(caper.hn.bin)
+plot(caper.hn.bin, main="Capercaillie, binned distances")
 # Summarise results
 caper.hn.bin$dht$individuals$summary
 caper.hn.bin$dht$individuals$D[1:6]

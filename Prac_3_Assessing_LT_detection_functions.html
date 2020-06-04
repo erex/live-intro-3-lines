@@ -439,7 +439,7 @@ summary {
 
 
 <h1 class="title toc-ignore">Introduction to distance sampling</h1>
-<h3 class="subtitle">Workshop, 04-15 May 2020</h3>
+<h3 class="subtitle">Workshop, 06-17 July 2020</h3>
 <h4 class="author">Centre for Research into Ecological and Environmental Modelling <strong>University of St Andrews</strong></h4>
 <h4 class="date">Exercise 3. Assessing line transect detection functions</h4>
 
@@ -506,7 +506,7 @@ summary {
 <p>The histogram indicates that there is a large gap in detections therefore, to avoid a long right hand tail in the detection function, truncation is necessary. There are several ways to truncate: excluding distances beyond some specified distance or excluding a specified percentage of the largest distances. Note that here we only consider excluding large perpendicular distances, which is frequently referred to as right truncation.</p>
 <div id="truncation-at-a-fixed-distance" class="section level3">
 <h3><span class="header-section-number">2.2.1</span> Truncation at a fixed distance</h3>
-<p>The following command truncates the perpendicular distances at 20 metres i.e. objects detected beyond 20 m are excluded.</p>
+<p>The following command truncates the perpendicular distances at 20 metres i.e. objects detected beyond 20m are excluded.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Truncate at 20metres</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a>lt.hn.t20m &lt;-<span class="st"> </span><span class="kw">ds</span>(<span class="dt">data=</span>LTExercise, <span class="dt">key=</span><span class="st">&quot;hn&quot;</span>, <span class="dt">adjustment=</span><span class="ot">NULL</span>, <span class="dt">truncation=</span><span class="dv">20</span>,</span>
 <span id="cb7-3"><a href="#cb7-3"></a>                 <span class="dt">convert.units=</span>conversion.factor)</span></code></pre></div>
@@ -540,7 +540,7 @@ summary {
 <p>The data stored in a data set <code>cappercaillie</code> were collected during a line transect survey of capercaillie (a species of large grouse) in Scotland. The data consist of:</p>
 <ul>
 <li>Region.Label - name of the region</li>
-<li>Area - size of region (hectares)</li>
+<li>Area - size of region in hectares <em>(1 hectare = 100m <span class="math inline">\(\times\)</span> 100m)</em></li>
 <li>Sample.Label - line transect identifier (one transect)</li>
 <li>Effort - length of line (km)</li>
 <li>object - unique identifier for each group detected</li>

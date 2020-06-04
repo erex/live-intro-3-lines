@@ -1,7 +1,7 @@
 ---
 title: Introduction to distance sampling
 author: Centre for Research into Ecological and Environmental Modelling  **University of St Andrews**
-subtitle: Workshop, 04-15 May 2020
+subtitle: Workshop, 06-17 July 2020
 date: Exercise 3. Assessing line transect detection functions
 output: 
   html_document:
@@ -102,7 +102,7 @@ The histogram indicates that there is a large gap in detections therefore, to av
 
 ### Truncation at a fixed distance
 
-The following command truncates the perpendicular distances at 20 metres i.e. objects detected beyond 20 m are excluded. 
+The following command truncates the perpendicular distances at 20 metres i.e. objects detected beyond 20m are excluded. 
 
 ```{r, echo=TRUE, eval=FALSE, message=FALSE}
 # Truncate at 20metres
@@ -155,7 +155,7 @@ Change the key and adjustment terms: possible options are listed in Exercise 2 o
 The data stored in a data set `cappercaillie` were collected during a line transect survey of capercaillie (a species of large grouse) in Scotland. The data consist of:
 
 + Region.Label - name of the region
-+ Area - size of region (hectares\footnote{1 hectare = 100m $\times$ 100m})
++ Area - size of region in hectares *(1 hectare = 100m $\times$ 100m)*
 + Sample.Label - line transect identifier (one transect)
 + Effort - length of line (km)
 + object - unique identifier for each group detected 

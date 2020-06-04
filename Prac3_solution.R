@@ -152,7 +152,7 @@ knitr::kable(caper.tab, digits=3,
              caption="Capercaillie point estimates of density and associated measures of precision.")
 
 
-## ---- echo=TRUE, eval=TRUE, fig.width=3, fig.height=3, message=FALSE-----------------
+## ---- echo=TRUE, eval=TRUE, fig.width=5, fig.height=4, message=FALSE-----------------
 # Specify (uneven) cutpoint for bins
 bins <- c(0, seq(from=7.5, to=67.5, by=10), 80)
 # Check bins
@@ -161,7 +161,7 @@ bins
 caper.hn.bin <- ds(data=capercaillie, key="hn", adjustment="cos", cutpoints=bins,
                    convert.units=conversion.factor)
 # Plot
-plot(caper.hn.bin)
+plot(caper.hn.bin, main="Capercaillie, binned distances")
 # Summarise results
 caper.hn.bin$dht$individuals$summary
 caper.hn.bin$dht$individuals$D[1:6]

@@ -8,7 +8,7 @@ output:
 theme: flatly
 highlight: tango
 df_print: kable
-subtitle: Workshop, 04-15 May 2020
+subtitle: Workshop, 06-17 July 2020
 ---
   
 ```{r setup, include=FALSE}

@@ -115,9 +115,9 @@ knitr::kable(lt.tab, digits=3,
              caption="Results for simulated data with differing truncation and detection functions.")
 ```
 
-There is a change in $\hat P_a$ due to truncation but all the models provide very similar density results, although precision is slightly larger for the hazard rate model (because more parameters are estimated). Agreement between the estimate and the known true density is less good if you do not truncate the data, or do not truncate sufficiently. Note that the AIC values can only be compared for models with the same truncation and hence the same objects. 
+There is a change in $\hat P_a$ due to truncation but all the models provide very similar density results, although precision is slightly poorer for the hazard rate model (because more parameters are estimated). Agreement between the estimate and the known true density is less good if you do not truncate the data, or do not truncate sufficiently. Note that the AIC values can only be compared for models with the same truncation and hence the same objects. 
 
-The take home message is that, with care, we can get reliable estimates using the wrong model (remember the data were simulated using a half normal detection function): this is useful because, in practise, the 'correct' model is never known.
+The take home message is that, with care, we can get reliable estimates using the wrong model (remember the data were simulated using a half normal detection function). It is gratifying because, in practise, the 'correct' model is never known.
 
 ```{r, echo=TRUE, eval=TRUE}
 # Divide plot window

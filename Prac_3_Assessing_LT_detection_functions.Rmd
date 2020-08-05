@@ -1,14 +1,10 @@
 ---
 title: Introduction to distance sampling
-author: Centre for Research into Ecological and Environmental Modelling  **University of St Andrews**
-subtitle: Workshop, 06-17 July 2020
-date: Exercise 3. Assessing line transect detection functions
+author: Centre for Research into Ecological and Environmental Modelling  <br> **University of St Andrews**
+date: Exercise 3. Assessing line transect detection functions <br> September 2020
 output: 
-  html_document:
-    number_sections: yes
-    theme: flatly
+  rmdformats::readthedown:
     highlight: tango
-    df_print: kable
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -174,14 +170,12 @@ Access these data and:
 Sometimes we wish to convert exact distances to binned distances, if for example, there is evidence of rounding to favoured values. To do this in `ds` we need to specify the cutpoints of the bins, including zero and the maximum distance. In the example below, cutpoints at 0, 10, 20, ..., 80 are specified. 
 
 ```{r, echo=TRUE, eval=FALSE}
-# Import data
 data(capercaillie)
 # Specify cutpoint for bins
 bins <- seq(from=0, to=80, by=10)
 conversion.factor <- convert_units("meter", "kilometer", "hectare")
-# Specify model with binned distances
+# Fit model with binned distances
 caper.bin <- ds(data=capercaillie, key="hn", cutpoints=bins, 
                 convert.units=conversion.factor)
-# Plot
 plot(caper.bin)
 ```

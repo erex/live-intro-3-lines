@@ -1,23 +1,20 @@
-## ----setup, include=FALSE------------------------------------------------------------
+## ----setup, include=FALSE-------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+options(width=100)
 
 
-## ---- echo=TRUE, eval=TRUE, message=FALSE--------------------------------------------
-# Load library 
+## ---- echo=TRUE, eval=TRUE, message=FALSE---------------------------------------
 library(Distance)
-# Access data
 data("LTExercise")
 # Check that it has been imported correctly
 head(LTExercise, n=3)
-# How many observations (remember no detections on line 11)
-max(LTExercise$object, na.rm=TRUE)
 
 
-## ------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------
 LTExercise[100:102, ]
 
 
-## ---- message=FALSE------------------------------------------------------------------
+## ---- message=FALSE-------------------------------------------------------------
 conversion.factor <- convert_units("meter", "kilometer", "square kilometer")
 # Truncate at 20metres
 lt.hn.t20m <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation=20, 
@@ -25,21 +22,21 @@ lt.hn.t20m <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation=20,
 summary(lt.hn.t20m)
 
 
-## ---- message=FALSE------------------------------------------------------------------
+## ---- message=FALSE-------------------------------------------------------------
 # Truncate 10% of largest distances
 lt.hn.t10per <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation="10%", 
                 convert.units=conversion.factor)
 summary(lt.hn.t10per)
 
 
-## ---- echo=TRUE, eval=TRUE-----------------------------------------------------------
+## ---- echo=TRUE, eval=TRUE------------------------------------------------------
 # Divide plot window
 par(mfrow=c(1,2))
 plot(lt.hn.t20m, main="Truncation 20m")
 plot(lt.hn.t10per, main="Truncation 10%")
 
 
-## ---- echo=TRUE, eval=TRUE, message=FALSE--------------------------------------------
+## ---- echo=TRUE, eval=TRUE, message=FALSE---------------------------------------
 # Fit a few different models
 # Half normal model, no adjustments, no truncation
 lt.hn <- ds(data=LTExercise, key="hn", adjustment=NULL, convert.units=conversion.factor)
@@ -54,7 +51,7 @@ lt.hr.t20m <- ds(data=LTExercise, key="hr", adjustment="poly", truncation=20,
                  convert.units=conversion.factor)
 
 
-## ---- echo=FALSE, eval=TRUE----------------------------------------------------------
+## ---- echo=FALSE, eval=TRUE-----------------------------------------------------
 # This block of code is quite complex, but not because of performing
 #   distance sampling analysis.  Instead it is used to make the tables
 #   for the solution look attractive.
@@ -78,13 +75,13 @@ lt.tab[3,5:10] <- get.results.f(lt.uf.cos.t20m)
 lt.tab[4,5:10] <- get.results.f(lt.hr.t20m)
 
 
-## ---- echo=FALSE, eval=TRUE----------------------------------------------------------
+## ---- echo=FALSE, eval=TRUE-----------------------------------------------------
 # Print results
 knitr::kable(lt.tab, digits=3,
              caption="Results for simulated data with differing truncation and detection functions.")
 
 
-## ---- echo=TRUE, eval=TRUE-----------------------------------------------------------
+## ---- echo=TRUE, eval=TRUE------------------------------------------------------
 # Divide plot window
 par(mfrow=c(2,2))
 # Plot detection functions
@@ -94,10 +91,8 @@ plot(lt.uf.cos.t20m, main="Uniform, truncation at 20m")
 plot(lt.hr.t20m, main="HR, truncation at 20m")
 
 
-## ---- fig.height=4, fig.width=4, message=FALSE---------------------------------------
-# Access data
+## ---- fig.height=4, fig.width=4, message=FALSE----------------------------------
 data(capercaillie)
-# Check data OK
 head(capercaillie, n=3)
 conversion.factor <- convert_units("meter", "kilometer", "hectare")
 # Fit a half normal model with no adjustments and no truncation
@@ -107,8 +102,7 @@ caper.hn <- ds(data=capercaillie, key="hn", adjustment=NULL,
 plot(caper.hn, nc=40)
 
 
-## ---- message=FALSE------------------------------------------------------------------
-# Fit different models allowing cosine adjustments if required
+## ---- message=FALSE-------------------------------------------------------------
 # Half normal model 
 caper.hn.cos <- ds(data=capercaillie, key="hn", adjustment="cos",
                    convert.units=conversion.factor)
@@ -120,7 +114,7 @@ caper.uf.cos <- ds(data=capercaillie, key="unif", adjustment="cos",
                    convert.units=conversion.factor)
 
 
-## ---- echo=TRUE, eval=TRUE, results="hide"-------------------------------------------
+## ---- echo=TRUE, eval=TRUE, results="hide"--------------------------------------
 # Divide plot window
 par(mfrow=c(3,2))
 par(mar=c(4,4,.2,.1))
@@ -132,12 +126,12 @@ plot(caper.uf.cos, main="Uniform")
 gof_ds(caper.uf.cos)
 
 
-## ------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------
 knitr::kable(summarize_ds_models(caper.hn.cos, caper.hr.cos, caper.uf.cos, output="plain"),
                caption="Summary of results of Capercaillie analysis.", digits = 3)
 
 
-## ---- echo=FALSE, eval=TRUE----------------------------------------------------------
+## ---- echo=FALSE, eval=TRUE-----------------------------------------------------
 # Harvest results
 caper.tab <- data.frame(DetectionFunction=c("Half-normal","Hazard rate",
                                             "Uniform"), 
@@ -152,7 +146,7 @@ knitr::kable(caper.tab, digits=3,
              caption="Capercaillie point estimates of density and associated measures of precision.")
 
 
-## ---- echo=TRUE, eval=TRUE, fig.width=5, fig.height=4, message=FALSE-----------------
+## ---- echo=TRUE, eval=TRUE, fig.width=5, fig.height=4, message=FALSE------------
 # Specify (uneven) cutpoint for bins
 bins <- c(0, seq(from=7.5, to=67.5, by=10), 80)
 # Check bins

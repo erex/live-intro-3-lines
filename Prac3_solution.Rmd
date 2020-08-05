@@ -1,18 +1,15 @@
 ---
 title: Introduction to distance sampling
-author: Centre for Research into Ecological and Environmental Modelling  **University of St Andrews**
-subtitle: Workshop, 06-17 July 2020
-date: Exercise 3. Assessing line transect detection functions 
+author: Centre for Research into Ecological and Environmental Modelling  <br> **University of St Andrews**
+date: Exercise 3. Assessing line transect detection functions <br> September 2020
 output: 
-  html_document:
-    number_sections: yes
-    theme: flatly
+  rmdformats::readthedown:
     highlight: tango
-    df_print: kable
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+options(width=100)
 ```
 
 <div class="alert  alert-success">
@@ -22,14 +19,10 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 # Fitting models to simulated data
 
 ```{r, echo=TRUE, eval=TRUE, message=FALSE}
-# Load library 
 library(Distance)
-# Access data
 data("LTExercise")
 # Check that it has been imported correctly
 head(LTExercise, n=3)
-# How many observations (remember no detections on line 11)
-max(LTExercise$object, na.rm=TRUE)
 ```
 
 These data contain 105 observations. There were no detections on Line 11 and the format below indicates that `NA` is used to specify this. 
@@ -117,7 +110,7 @@ knitr::kable(lt.tab, digits=3,
 
 There is a change in $\hat P_a$ due to truncation but all the models provide very similar density results, although precision is slightly poorer for the hazard rate model (because more parameters are estimated). Agreement between the estimate and the known true density is less good if you do not truncate the data, or do not truncate sufficiently. Note that the AIC values can only be compared for models with the same truncation and hence the same objects. 
 
-The take home message is that, with care, we can get reliable estimates using the wrong model (remember the data were simulated using a half normal detection function). It is gratifying because, in practise, the 'correct' model is never known.
+*Take home message:* with care, we can get reliable estimates using the wrong model (remember the data were simulated using a half normal detection function). It is gratifying because, in practise, the 'correct' model is never known.
 
 ```{r, echo=TRUE, eval=TRUE}
 # Divide plot window
@@ -134,9 +127,7 @@ plot(lt.hr.t20m, main="HR, truncation at 20m")
 After accessing these data, a basic model is fitted and plotted to determine if truncation is required. 
 
 ```{r, fig.height=4, fig.width=4, message=FALSE}
-# Access data
 data(capercaillie)
-# Check data OK
 head(capercaillie, n=3)
 conversion.factor <- convert_units("meter", "kilometer", "hectare")
 # Fit a half normal model with no adjustments and no truncation
@@ -150,8 +141,9 @@ There is not a long tail to the histogram of perpendicular distances and so no t
 
 There may be evidence of rounding to some values (e.g. 0, 30, 40, 70) however, we will ignore this at present (but address it below) and fit the three alternative key functions and use the default setting for adjustments terms (i.e. cosine up to order 5). 
 
+## Fitting multiple models to exact distance data
+
 ```{r, message=FALSE}
-# Fit different models allowing cosine adjustments if required
 # Half normal model 
 caper.hn.cos <- ds(data=capercaillie, key="hn", adjustment="cos",
                    convert.units=conversion.factor)

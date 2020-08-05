@@ -1,14 +1,10 @@
 ---
 title: "Introduction to distance sampling"
-author: "Centre for Research into Ecological and Environmental Modelling **University of St Andrews**"
-date: "Demo: two stages of model selection"
+author: Centre for Research into Ecological and Environmental Modelling <br> **University of St Andrews**
+date: Demonstration--two stages of model selection <br> September 2020
 output:
-  html_document:
-  number_sections: yes
-theme: flatly
-highlight: tango
-df_print: kable
-subtitle: Workshop, 06-17 July 2020
+  rmdformats::readthedown:
+    highlight: tango  
 ---
   
 ```{r setup, include=FALSE}

@@ -1,7 +1,7 @@
 ---
 title: "Introduction to distance sampling"
 author: Centre for Research into Ecological and Environmental Modelling <br> **University of St Andrews**
-date: Demonstration--two stages of model selection <br> September 2020
+date: Demonstration--two stages of model selection <br> November 2020
 output:
   rmdformats::readthedown:
     highlight: tango  

@@ -1619,12 +1619,13 @@ $(document).ready(function () {
       <ul>
       <li><a href="#converting-exact-distances-to-binned-distances">Converting exact distances to binned distances</a></li>
       </ul></li>
+      <li><a href="#references">References</a></li>
       </ul>
     </div>
     
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
               <p class="author"><span class="glyphicon glyphicon-user"></span> Centre for Research into Ecological and Environmental Modelling <br> <strong>University of St Andrews</strong></p>
-                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> Exercise 3. Assessing line transect detection functions <br> September 2020</p>
+                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> Exercise 3. Assessing line transect detection functions <br> November 2020</p>
         </div>
 </div>
 
@@ -1720,10 +1721,10 @@ $(document).ready(function () {
 <ul>
 <li>The objective of this portion of the exercise is to give you more practice with a line transect data set and also familiarise you with converting from exact distances to binned distances.</li>
 </ul>
-<p>The data stored in a data set <code>cappercaillie</code> were collected during a line transect survey of capercaillie (a species of large grouse) in Scotland. The data consist of:</p>
+<p>The data stored in a data set <code>capercaillie</code> were collected during a line transect survey of capercaillie (a species of large grouse) in Scotland. For a paper demonstrating a distance sampling survey of this species, consult <span class="citation">(Catt et al., 1998)</span>. The data consist of:</p>
 <ul>
 <li>Region.Label - name of the region</li>
-<li>Area - size of region in hectares <em>(1 hectare = 100m <span class="math inline">\(\times\)</span> 100m)</em></li>
+<li>Area - size of region in hectares <em>(1 hectare = 100m</em> <span class="math inline">\(\times\)</span> 100m)</li>
 <li>Sample.Label - line transect identifier (one transect)</li>
 <li>Effort - length of line (km)</li>
 <li>object - unique identifier for each group detected</li>
@@ -1748,6 +1749,14 @@ $(document).ready(function () {
 <span id="cb11-6"><a href="#cb11-6"></a>caper.bin &lt;-<span class="st"> </span><span class="kw">ds</span>(<span class="dt">data=</span>capercaillie, <span class="dt">key=</span><span class="st">&quot;hn&quot;</span>, <span class="dt">cutpoints=</span>bins, </span>
 <span id="cb11-7"><a href="#cb11-7"></a>                <span class="dt">convert.units=</span>conversion.factor)</span>
 <span id="cb11-8"><a href="#cb11-8"></a><span class="kw">plot</span>(caper.bin)</span></code></pre></div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references hanging-indent">
+<div id="ref-catt1998a">
+<p>Catt, D., Baines, D., Picozzi, N., Moss, R., &amp; Summers, R. (1998). Abundance and distribution of capercaillie <em>Tetrao urogallus</em> in Scotland 1992–1994. <em>Biological Conservation</em>, <em>85</em>(3), 257–267. <a href="https://doi.org/10.1016/s0006-3207(97)00171-7">https://doi.org/10.1016/s0006-3207(97)00171-7</a></p>
+</div>
 </div>
 </div>
 </div>

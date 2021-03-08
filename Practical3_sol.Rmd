@@ -1,0 +1,198 @@
+#< ignore
+
+```{r start}
+setwd("C:/Users/erexs/Documents/RTutor/introwkshp")
+library(RTutor)
+libs <- c("Distance")
+create.ps(sol.file="Practical3_sol.Rmd", ps.name="Practical3", libs = libs,
+          user.name = NULL, addons="quiz")
+show.ps("Practical3")
+```
+
+#>
+
+<img src=https://images.unsplash.com/photo-1611602745202-8feda1936921?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80   width=400 height=200 style="float:right">
+
+## Exercise 3 -- Line transect analysis
+
+This data set was simulated so we know both the true population density and the true underlying detection function.  Our interest lies in the robustness of the density estimates in the face of model uncertainty.  With actual data, we will not know the shape of the underlying process that gives rise to the detection process.  It would be reassuring if density estimates were relatively insensitive to choice of detection function model.  Let's find out how sensitive our estimates are for this data set.
+
+#< preknit
+
+```{r  message=FALSE}
+library(Distance)
+data("LTExercise")
+conversion.factor <- convert_units("meter", "kilometer", "square kilometer")
+lt.hn.cos.t20m <- ds(data=LTExercise, key="hn", adjustment="cos", truncation=20, 
+                     convert.units=conversion.factor)
+lt.uf.cos.t20m <- ds(data=LTExercise, key="unif", adjustment="cos", 
+                     truncation=20, convert.units=conversion.factor)
+lt.hr.t20m <- ds(data=LTExercise, key="hr", truncation=20,
+                 convert.units=conversion.factor)
+```
+
+```{r "table", echo=FALSE}
+nest.tab <- data.frame(
+                       DetectionFunction=c("Half-normal 20m trunc",
+                                           "Uniform, cosine adjustments 20m trunc",
+                                           "Hazard rate 20m trunc"),
+                       Density=rep(NA,3), LowerCI=rep(NA,3), UpperCI=rep(NA,3))
+
+get.results.f <- function(fit.model) {   
+  return(c(D=fit.model$dht$individuals$D$Estimate,
+         lCL=fit.model$dht$individuals$D$lcl,
+         uCL=fit.model$dht$individuals$D$ucl))
+}
+nest.tab[1,2:4] <- get.results.f(lt.hn.cos.t20m)
+nest.tab[2,2:4] <- get.results.f(lt.uf.cos.t20m)
+nest.tab[3,2:4] <- get.results.f(lt.hr.t20m)
+knitr::kable(nest.tab, 
+             caption="Density estimates and confidence intervals for three fitted models.", 
+             digits = 1) %>%
+    kableExtra::kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+#>
+
+#### Answer these questions by looking at the table above
+
+a) Repeat the calculations that you made at the conclusion of Exercise 2; this time looking at the relative difference between the most extreme density estimates for this data set (remember true density is 79.8 per km^2 ).  Use the three key functions (uniform with cosine adjustment, half normal and hazard rate) with a 20m truncation distance suggested in the exercise.
+
+```{r "3 a)"}
+#< hint
+display("Find the density estimates in your output; compute their difference; relativise the difference.")
+#>
+#< fill_in
+dhat.hn <- ___
+dhat.uf <- ___
+d.diff <- ___ - ___
+rel.diff <- d.diff / ___
+print(rel.diff)
+#>
+dhat.hn <- 84.1
+dhat.uf <- 86.4
+d.diff <- dhat.uf - dhat.hn
+rel.diff <- d.diff / dhat.hn
+print(rel.diff)
+```
+
+
+#< quiz "diffmag"
+question: What was the relative percentage difference between the smallest and largest density estimate for these simulated data?
+sc:
+    - 1%
+    - 3%*
+    - 5%
+    - 30%
+success: Right; 3%
+failure: Revisit your calculation of relative difference.
+#>
+
+#< quiz "noadj"
+question: What effect did adjustment terms have upon model fit for the half normal and hazard rate key functions with 20m truncation?
+sc:
+    - caused the hazard rate model to outperform the half normal
+    - improved performance of the hazard rate model, but not the half normal
+    - adjustment terms did not appear in the final key function models*
+success: Right; only the uniform key needed an adjustment term to fit the data
+failure: Re-visit the table showing the number of adjustment terms for each fitted model.
+#>
+
+### Model fit
+
+b) One oversight of the analysis of `LTExercise` simulated data is the failure to assess model fit.  Using the `gof_ds` function, below is code to perform Cramer-von Mises goodness of fit tests upon all three key function models with 20m truncation.  Use the argument `plot=FALSE` to skip production of the Q-Q plot in this instance.
+
+#< preknit
+
+```{r "3 b)"}
+gof_ds(lt.hn.cos.t20m, plot=FALSE)
+gof_ds(lt.uf.cos.t20m, plot=FALSE)
+gof_ds(lt.hr.t20m, plot=FALSE)
+```
+
+#>
+
+#< quiz "cvm"
+question: Is there any reason to doubt the utility of these models based upon their fit to the data?
+answer: no
+#>
+
+### Capercaillie data
+
+c) Watch out for danger signs in output of functions.  Examine the output of this simple half normal fitted to the exact capercaillie distances
+
+#< preknit
+```{r caper}
+data("capercaillie")
+conversion.factor <- convert_units("meter", "kilometer", "hectare")
+caper.hn <- ds(data=capercaillie, key="hn", adjustment=NULL, 
+               convert.units=conversion.factor)
+summary(caper.hn)
+```
+
+#>
+
+#< quiz "seer0"
+question: What strikes you as strange about the variability associated with encounter rate (`se.ER` and `cv.ER`)?
+sc:
+    - they are incredibly large
+    - they are vanishingly small (as in zero)*
+success: Correct; always check output for suspicious findings
+failure: How do you define large?
+#> 
+
+#< quiz "singletransect"
+question: What aspects in the data (of the survey design) might explain this?
+sc:
+    - very few capercaillie were detected
+    - the detection function model fits poorly
+    - the design was intended for a different species
+    - there were no replicate transects, only one*
+success: Right; with only a single transect, variability between transects cannot be assessed
+failure: Afraid not, how do you measure the variability between things?
+#>
+
+#< quiz "caper"
+question: This is an actual data set, so we do not know the true density of capercaillie in this study area.  However we can compare the point estimates of density derived from distances treated as exact and from binned distances. 
+sc:
+    - With binned distances, the estimate of $\hat{D}$ is an order of magnitude larger than with exact distances
+    - $\hat{D}$ from the half normal with binned distances is between the estimates of $\hat{D}$ with the half normal and hazard rate keys using exact distances*
+    - We are not sure whether the detection function fitted to the exact distances fit the data
+success: Right; the shape of the fitted detection function is largely the same whether using binned or exact distances.
+failure: Surprisingly, the model fitted to the exact distance data does indeed fit adequately to use for inference.
+#>
+
+### Model selection sidebar
+
+#### Answer these questions by looking at the model selection 
+
+I'll not repeat the entire model selection demonstration here, so you will need to switch between the tutorial and the demonstration (perhaps open them in side-by-side browser windows).
+
+d) Model selection is used to determine the appropriate number of adjustment terms associated with a particular key function when fitting a detection function model.  This aspect of model selection is performed by `ds` without your intervention.  Examples of the model selection process was shown using the Eastern tropical Pacific dolphin survey as an example.  Model selection occurs in a step-wise fashion comparing AIC scores of successively more complex (models with added adjustment terms) models.
+
+#< quiz "hnadjterm"
+question: For the half normal key function with cosine adjustments, how many different adjustment term models were fitted?
+answer: 3
+#> 
+
+#< quiz "hnadjterm1"
+question: Of those fitted, how many adjustment terms were in the chosen model?
+answer: 1
+#> 
+
+#< quiz "unicos"
+question: How many parameters in total are in the chosen half normal key function with cosine adjustments? 
+answer: 2
+#> 
+
+#< quiz "hzcos"
+question: How many parameters in total are in the chosen hazard rate key function with cosine adjustments?
+answer: 2
+#> 
+
+#< quiz "nodifference"
+question: How large is the difference in $\hat{P}_a$ estimates for the chosen half normal key function model and the hazard rate key function model?
+answer: 0.001
+#> 
+
+Let the magnitude of difference in $\hat{P}_a$ estimates sink in for a moment.

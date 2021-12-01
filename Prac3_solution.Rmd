@@ -1,7 +1,7 @@
 ---
 title: Exercise 3<br> Assessing line transect detection functions
 author: Centre for Research into Ecological and Environmental Modelling <br> **University of St Andrews**
-date: Introduction to distance sampling<br> September 2021
+date: Introduction to distance sampling<br> January 2022
 output: 
   rmdformats::readthedown:
     highlight: tango

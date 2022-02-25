@@ -1,7 +1,7 @@
 #< ignore
 
 ```{r start}
-setwd("C:/Users/erexs/Documents/RTutor/introwkshp")
+setwd("C:/Users/erexs/Documents/GitHub/live-intro-3-lines")
 library(RTutor)
 libs <- c("Distance")
 create.ps(sol.file="Practical3_sol.Rmd", ps.name="Practical3", libs = libs,
@@ -24,11 +24,11 @@ library(Distance)
 data("LTExercise")
 conversion.factor <- convert_units("meter", "kilometer", "square kilometer")
 lt.hn.cos.t20m <- ds(data=LTExercise, key="hn", adjustment="cos", truncation=20, 
-                     convert.units=conversion.factor)
+                     convert_units=conversion.factor)
 lt.uf.cos.t20m <- ds(data=LTExercise, key="unif", adjustment="cos", 
-                     truncation=20, convert.units=conversion.factor)
+                     truncation=20, convert_units=conversion.factor)
 lt.hr.t20m <- ds(data=LTExercise, key="hr", truncation=20,
-                 convert.units=conversion.factor)
+                 convert_units=conversion.factor)
 ```
 
 ```{r "table", echo=FALSE}
@@ -126,7 +126,7 @@ c) Watch out for danger signs in output of functions.  Examine the output of thi
 data("capercaillie")
 conversion.factor <- convert_units("meter", "kilometer", "hectare")
 caper.hn <- ds(data=capercaillie, key="hn", adjustment=NULL, 
-               convert.units=conversion.factor)
+               convert_units=conversion.factor)
 summary(caper.hn)
 ```
 

@@ -18,14 +18,14 @@ LTExercise[100:102, ]
 conversion.factor <- convert_units("meter", "kilometer", "square kilometer")
 # Truncate at 20metres
 lt.hn.t20m <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation=20, 
-                convert.units=conversion.factor)
+                convert_units=conversion.factor)
 summary(lt.hn.t20m)
 
 
 ## ---- message=FALSE-------------------------------------------------------------
 # Truncate 10% of largest distances
 lt.hn.t10per <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation="10%", 
-                convert.units=conversion.factor)
+                convert_units=conversion.factor)
 summary(lt.hn.t10per)
 
 
@@ -39,16 +39,16 @@ plot(lt.hn.t10per, main="Truncation 10%")
 ## ---- echo=TRUE, eval=TRUE, message=FALSE---------------------------------------
 # Fit a few different models
 # Half normal model, no adjustments, no truncation
-lt.hn <- ds(data=LTExercise, key="hn", adjustment=NULL, convert.units=conversion.factor)
+lt.hn <- ds(data=LTExercise, key="hn", adjustment=NULL, convert_units=conversion.factor)
 # Half normal model, cosine adjustments, truncation at 20m
 lt.hn.cos.t20m <- ds(data=LTExercise, key="hn", adjustment="cos", truncation=20, 
-                     convert.units=conversion.factor)
+                     convert_units=conversion.factor)
 # Uniform model, cosine adjustments, truncation at 20m
 lt.uf.cos.t20m <- ds(data=LTExercise, key="unif", adjustment="cos", 
-                     truncation=20, convert.units=conversion.factor)
+                     truncation=20, convert_units=conversion.factor)
 # Hazard rate model, no adjustments, truncation at 20m
 lt.hr.t20m <- ds(data=LTExercise, key="hr", adjustment="poly", truncation=20,
-                 convert.units=conversion.factor)
+                 convert_units=conversion.factor)
 
 
 ## ---- echo=FALSE, eval=TRUE-----------------------------------------------------
@@ -97,7 +97,7 @@ head(capercaillie, n=3)
 conversion.factor <- convert_units("meter", "kilometer", "hectare")
 # Fit a half normal model with no adjustments and no truncation
 caper.hn <- ds(data=capercaillie, key="hn", adjustment=NULL, 
-               convert.units=conversion.factor)
+               convert_units=conversion.factor)
 # Plot with lots of bins, each of width 2m
 plot(caper.hn, nc=40)
 
@@ -105,13 +105,13 @@ plot(caper.hn, nc=40)
 ## ---- message=FALSE-------------------------------------------------------------
 # Half normal model 
 caper.hn.cos <- ds(data=capercaillie, key="hn", adjustment="cos",
-                   convert.units=conversion.factor)
+                   convert_units=conversion.factor)
 # Hazard rate model  
 caper.hr.cos <- ds(data=capercaillie, key="hr", adjustment="cos",
-                   convert.units=conversion.factor)
+                   convert_units=conversion.factor)
 # Uniform model  
 caper.uf.cos <- ds(data=capercaillie, key="unif", adjustment="cos",
-                   convert.units=conversion.factor)
+                   convert_units=conversion.factor)
 
 
 ## ---- echo=TRUE, eval=TRUE, results="hide"--------------------------------------
@@ -153,7 +153,7 @@ bins <- c(0, seq(from=7.5, to=67.5, by=10), 80)
 bins
 # Specify model with binned distances
 caper.hn.bin <- ds(data=capercaillie, key="hn", adjustment="cos", cutpoints=bins,
-                   convert.units=conversion.factor)
+                   convert_units=conversion.factor)
 # Plot
 plot(caper.hn.bin, main="Capercaillie, binned distances")
 # Summarise results

@@ -1,7 +1,7 @@
 ---
 title: Exercise 3<br> Assessing line transect detection functions
 author: Centre for Research into Ecological and Environmental Modelling <br> **University of St Andrews**
-date: Introduction to distance sampling<br> January 2022
+date: Introduction to distance sampling<br> April 2022
 output: 
   rmdformats::readthedown:
     highlight: tango
@@ -80,7 +80,7 @@ For this project, perpendicular distances are in metres and the transect lines a
 conversion.factor <- convert_units("meter", "kilometer", "square kilometer")
 # Fit half normal, no adjustments
 lt.hn <- ds(data=LTExercise, key="hn", adjustment=NULL,
-            convert.units=conversion.factor)
+            convert_units=conversion.factor)
 ```
 
 Looking at a summary of the model object, how many objects are there in total? What is the maximum observed perpendicular distance?
@@ -105,7 +105,7 @@ The following command truncates the perpendicular distances at 20 metres i.e. ob
 ```{r, echo=TRUE, eval=FALSE, message=FALSE}
 # Truncate at 20metres
 lt.hn.t20m <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation=20,
-                 convert.units=conversion.factor)
+                 convert_units=conversion.factor)
 ```
 
 Generate a summary and plot of the detection function to see what effect this truncation has had on the number of objects.
@@ -124,7 +124,7 @@ An alternative way to truncate distances is to specify a percentage of detected 
 ```{r, echo=TRUE, eval=FALSE, message=FALSE}
 # Truncate largest 10% of distances
 lt.hn.t10per <- ds(data=LTExercise, key="hn", adjustment=NULL, truncation="10%",
-                   convert.units=conversion.factor)
+                   convert_units=conversion.factor)
 ```
 
 Generate a summary and plot to see what effect truncation has had.
@@ -141,7 +141,7 @@ Decide on a suitable truncation distance (but don't spend too long on this) and 
 ```{r, echo=TRUE, eval=FALSE, message=FALSE}
 # Half normal detection, cosine adjustments, no truncation
 lt.hn.cos <- ds(data=LTExercise, key="hn", adjustment="cos",
-                convert.units=conversion.factor)
+                convert_units=conversion.factor)
 ```
 
 Change the key and adjustment terms: possible options are listed in Exercise 2 or use the `help(ds)` for options. See how the bias and precision compare between the models: the true density was 79.8 animals per km$^2$.
@@ -178,7 +178,7 @@ bins <- seq(from=0, to=80, by=10)
 conversion.factor <- convert_units("meter", "kilometer", "hectare")
 # Fit model with binned distances
 caper.bin <- ds(data=capercaillie, key="hn", cutpoints=bins, 
-                convert.units=conversion.factor)
+                convert_units=conversion.factor)
 plot(caper.bin)
 ```
 

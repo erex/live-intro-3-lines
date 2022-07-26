@@ -1,7 +1,7 @@
 ---
 title: Demonstration<br>two stages of model selection
 author: Centre for Research into Ecological and Environmental Modelling <br> **University of St Andrews**
-date: Introduction to distance sampling<br> April 2022
+date: Introduction to distance sampling<br> August/Sept 2022
 output:
   rmdformats::readthedown:
     highlight: tango
@@ -58,6 +58,10 @@ hncos <- ds(bino, key="hn", adj="cos")
 
 Three models with the half-normal key are fitted, with the preferred model being the second fitted, namely the model with a single adjustment term.
 
+```{r, fig.cap="Selection for best half normal model.", echo=FALSE, out.width="200%"}
+knitr::include_graphics("hncontest.png")
+```
+
 ## Uniform cosine
 
 ```{r unicos}
@@ -66,6 +70,10 @@ unicos <- ds(bino, key="unif", adj="cos")
 
 The same pattern as with the half-normal key, with a small exception. Four models with the uniform key are fitted, with the preferred model being the third fitted, namely the model with a three adjustment term.
 
+```{r, fig.cap="Selection for best uniform model.", echo=FALSE, out.width="200%"}
+knitr::include_graphics("unifcontest.png")
+```
+
 ## Hazard rate cosine
 
 ```{r hzcos}
@@ -73,6 +81,10 @@ hrcos <- ds(bino, key="hr", adj="cos")
 ```
 
 Two models are fitted with the hazard rate key function. The addition of a single adjustment term does not improve the AIC score, so there is no point in fitting a more complex model with additional adjustment terms.
+
+```{r, fig.cap="Selection for best hazard rate model.", echo=FALSE, out.width="200%"}
+knitr::include_graphics("hrcontest.png")
+```
 
 The contestants that emerge from the first round of model competition are:
 
@@ -88,6 +100,10 @@ While assessing relative measures of fit with AIC, I'll also assess absolute goo
 across.models <- summarize_ds_models(hncos,unicos,hrcos,output="plain")
 knitr::kable(across.models[, c(2,4,7)], row.names = FALSE, digits = 3) %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+```{r, fig.cap="Stage two of model selection.", echo=FALSE, out.width="200%"}
+knitr::include_graphics("round2.png")
 ```
 
 All models adequately fit the data as shown by the Cramer von Mises P-values. It is a close contest between models for smallest AIC score, with the smallest (by a fraction) going to the hazard rate model.
